@@ -1,0 +1,85 @@
+blueprint:
+  name: Zigbee2MQTT - Tuya single button switch - swhittak
+  description: "Blueprint Version: 11-01-25\n Blueprint Name: Zigbee2MQTT - Tuya Single Button
+    Switch (MQTT Device Trigger) - rdeangel\n\n This blueprint uses MQTT `device`
+    based triggers and it will be triggered only when the selected Device MQTT messages
+    are received."
+  domain: automation
+  input:
+    mode:
+      name: Automation Modes
+      description: https://www.home-assistant.io/docs/automation/modes/
+      default: parallel
+      selector:
+        select:
+          mode: dropdown
+          options:
+          - single
+          - restart
+          - queued
+          - parallel
+          sort: false
+          multiple: false
+          custom_value: false
+    zigbee_device:
+      name: Zigbee Device - Tuya TSn 1-Button (and alike)
+      description: Select the correct Zigbee device to use.
+      selector:
+        device:
+          integration: mqtt
+          multiple: false
+    button_one_short_press:
+      name: Single Press - Button
+      description: Action to run on Button - Single Press
+      default: []
+      selector:
+        action: {}
+    button_one_double_press:
+      name: Double Press - Button 1
+      description: Action to run on Button - Double Press
+      default: []
+      selector:
+        action: {}
+    button_one_long_press:
+      name: Long Press - Button 1
+      description: Action to run on Button - Long Press
+      default: []
+      selector:
+        action: {}
+#  source_url: https://gist.github.com/rdeangel/0362181f03cbce58b883eeaf2baa0863
+mode: !input mode
+max_exceeded: silent
+trigger:
+- platform: device
+  device_id: !input zigbee_device
+  domain: mqtt
+  type: action
+  subtype: single
+  id: button_short_press
+- platform: device
+  device_id: !input zigbee_device
+  domain: mqtt
+  type: action
+  subtype: double
+  id: button_double_press
+- platform: device
+  device_id: !input zigbee_device
+  domain: mqtt
+  type: action
+  subtype: hold
+  id: button_long_press
+condition: []
+action:
+- choose:
+  - conditions:
+    - condition: trigger
+      id: button_short_press
+    sequence: !input button_short_press
+  - conditions:
+    - condition: trigger
+      id: button_double_press
+    sequence: !input button_double_press
+  - conditions:
+    - condition: trigger
+      id: button_long_press
+    sequence: !input button_long_press

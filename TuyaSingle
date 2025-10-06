@@ -46,7 +46,7 @@ blueprint:
       default: []
       selector:
         action: {}
-#  source_url: https://gist.github.com/rdeangel/0362181f03cbce58b883eeaf2baa0863
+source_url: https://github.com/smw36164/HABlueprints/blob/main/TuyaSingle
 mode: !input mode
 max_exceeded: silent
 trigger:

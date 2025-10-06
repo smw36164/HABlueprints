@@ -28,20 +28,20 @@ blueprint:
         device:
           integration: mqtt
           multiple: false
-    button_one_short_press:
+    button_short_press:
       name: Single Press - Button
       description: Action to run on Button - Single Press
       default: []
       selector:
         action: {}
-    button_one_double_press:
-      name: Double Press - Button 1
+    button_double_press:
+      name: Double Press - Button
       description: Action to run on Button - Double Press
       default: []
       selector:
         action: {}
-    button_one_long_press:
-      name: Long Press - Button 1
+    button_long_press:
+      name: Long Press - Button
       description: Action to run on Button - Long Press
       default: []
       selector:

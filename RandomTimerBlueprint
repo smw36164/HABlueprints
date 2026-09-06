@@ -1,0 +1,60 @@
+blueprint:
+  name: Random Execution Time Sensor
+  description: >
+    Creates a timestamp sensor that picks a random time each day, falling
+    between a configurable start time and stop time. Useful for randomizing
+    automation trigger times (e.g. so a routine doesn't fire at the exact
+    same second every day).
+  domain: template
+  source_url: https://example.com/random-execution-time.yaml
+  input:
+    sensor_name:
+      name: Sensor Name
+      description: Friendly name for the generated sensor.
+      default: "Random Execution Time"
+      selector:
+        text: {}
+    unique_id:
+      name: Unique ID
+      description: >
+        Unique ID for the sensor entity. Change this if you use this
+        blueprint more than once so entities don't collide.
+      default: "random_execution_time"
+      selector:
+        text: {}
+    start_time:
+      name: Start Time
+      description: The earliest time of day the random timestamp can fall on.
+      default: "08:00:00"
+      selector:
+        time: {}
+    stop_time:
+      name: Stop Time
+      description: The latest time of day the random timestamp can fall on.
+      default: "17:00:00"
+      selector:
+        time: {}
+
+variables:
+  start_time_input: !input start_time
+  stop_time_input: !input stop_time
+
+trigger:
+  - platform: time
+    at: "00:00:00"
+  - platform: event
+    event_type: event_template_reloaded
+  - platform: homeassistant
+    event: start
+
+sensor:
+  - name: !input sensor_name
+    unique_id: !input unique_id
+    device_class: timestamp
+    state: >
+      {% set start_time = today_at(start_time_input) %}
+      {% set stop_time = today_at(stop_time_input) %}
+      {% set max_minutes = ((stop_time - start_time).total_seconds() / 60) | int %}
+      {% set random_minutes = range(0, max_minutes + 1) | random %}
+      {{ (start_time + timedelta(minutes = random_minutes)).isoformat() }}
+      
